@@ -66,7 +66,7 @@ What the finished demo proves:
 | | |
 |---|---|
 | Setup, first time | about 2 to 3 hours, most of it waiting for AWS |
-| **Rebuild** the AWS side after you deleted it | **25 to 40 minutes**, one command |
+| **Rebuild** the AWS side after you deleted it | **about 15 to 40 minutes** (14 minutes in my test run), one command |
 | Cost **while the cluster exists** | about **$0.26 an hour** (about **$190 a month** if left running) |
 | Cost **after you delete it** | **about $0** |
 | Azure OpenAI | cents for a demo |
@@ -285,13 +285,13 @@ This is the long, automatic part. It is also the command you run again every tim
 .\scripts\60-rebuild-eks.ps1
 ```
 
-It takes **25 to 40 minutes**. You can leave it running. It prints a heading for each stage and **skips anything already done**, so it is safe to run again if it stops partway.
+It takes **about 15 to 40 minutes** (14 minutes in my last test run; AWS is sometimes slower). You can leave it running. It prints a heading for each stage and **skips anything already done**, so it is safe to run again if it stops partway.
 
 | Stage | What is happening | Typical time |
 |---|---|---|
-| 1. Cluster | AWS creates the Kubernetes control plane | 10 to 15 min |
+| 1. Cluster | AWS creates the Kubernetes control plane | about 10 min |
 | 2. Add-ons | Network, proxy and DNS components | 1 to 2 min |
-| 3. Node | AWS starts one worker computer | 5 to 10 min |
+| 3. Node | AWS starts one worker computer | 3 to 10 min |
 | 4. kubectl | Your PC is connected to the cluster | seconds |
 | 5. Entra trust | **Adds a federated credential to the blueprint** using this cluster's address | seconds |
 | 6. Deploy | Starts the agent pod (it downloads its Python packages the first time) | 2 to 4 min |
@@ -350,7 +350,7 @@ The cluster bills **about $0.26 an hour for as long as it exists**, whether or n
 |---|---|---|---|
 | **Running** | about $0.26/hour (about $190/month) | already there | during a demo |
 | **Paused** (node stopped, cluster kept) | about $0.15/hour (about $110/month): the control plane and NAT gateway still bill | about 5 to 10 minutes | between demos on the same day or week |
-| **Deleted** | **about $0** | 25 to 40 minutes (one command) | any time you will not use it for a day or more |
+| **Deleted** | **about $0** | about 15 to 40 minutes (one command) | any time you will not use it for a day or more |
 
 ### Delete everything in AWS (cost goes to about $0)
 
@@ -359,7 +359,7 @@ The cluster bills **about $0.26 an hour for as long as it exists**, whether or n
 .\scripts\62-delete-eks.ps1
 ```
 
-Type `DELETE` when asked. It takes **10 to 15 minutes**. The script:
+Type `DELETE` when asked. It takes **about 10 to 15 minutes** (11 minutes in my test run) and shows progress as it goes. The script:
 
 1. removes the agent, the worker node, the cluster and the network AWS created for it (including the **NAT gateway**, the most expensive hidden item),
 2. switches off the CloudFormation protection some AWS accounts add to those stacks,
@@ -488,4 +488,4 @@ The deployment uses a stock Python image with the code mounted from a ConfigMap,
 - [Amazon EKS documentation](https://docs.aws.amazon.com/eks/) and [EKS pricing](https://aws.amazon.com/eks/pricing/)
 - [`eksctl`](https://eksctl.io/)
 
-*The build behind this guide was run end to end on 6 November 2026 on Amazon EKS (Kubernetes 1.34) with Python 3.12, LangGraph and the Agent 365 observability packages current at that time. On 10 November 2026 the generalised scripts in this folder were re-tested for the Azure OpenAI creation, permission grant and cleanup steps, the delete and verify script, and the manifest templating. A full from-scratch EKS rebuild using the generalised scripts (and a fresh blueprint created through the portal wizards) has not been repeated end to end, so expect to fix small things on your first run. The Microsoft Entra Agent ID and Agent 365 pieces were in Preview.*
+*The build behind this guide was run end to end on 6 November 2026 on Amazon EKS (Kubernetes 1.34) with Python 3.12, LangGraph and the Agent 365 observability packages current at that time. On 10 November 2026 the generalised scripts in this folder were tested end to end under Windows PowerShell 5.1: Azure OpenAI creation, the permission grant, a full EKS rebuild from nothing (14 minutes, agent running with the expected identity, a refused permission and telemetry spans), and a full delete that verified the AWS cost was back to about $0 (11 minutes). The one part not repeated is creating a brand-new blueprint and agent identity through the portal wizards (Steps 6 to 8 were run earlier by script), so expect small differences in portal wording on your first run. The Microsoft Entra Agent ID and Agent 365 pieces were in Preview.*

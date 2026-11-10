@@ -99,7 +99,7 @@ Agents > Registry that the agent appears.
 
 ```text
 Tell me the estimated cost, then ask me to confirm. If I say yes, run scripts\60-rebuild-eks.ps1 and keep me
-updated at each stage (it takes 25 to 40 minutes). If it stops, work out why from the output and the
+updated at each stage (it takes about 15 to 40 minutes). If it stops, work out why from the output and the
 Troubleshooting table, fix it, and re-run (it is safe to re-run). When it finishes, show me the identity JSON
 and explain in plain English what the pod token and the Entra token prove.
 ```

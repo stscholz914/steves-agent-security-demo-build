@@ -6,7 +6,7 @@
   4. connects kubectl, 5. tells Microsoft Entra to trust this cluster's tokens (federated credential),
   6. deploys the agent, 7. runs a smoke test.
   Prerequisites: scripts\config.ps1 filled in; signed in with:  aws login --region <region>   and   az login --tenant <tenant>
-  Takes 25-40 minutes. Costs about $0.26/hour while the cluster exists (see 62-delete-eks.ps1 to stop the meter).
+  Takes about 15-40 minutes (14 in testing). Costs about $0.26/hour while the cluster exists (see 62-delete-eks.ps1 to stop the meter).
   Lessons built in:
    - Some AWS accounts only allow certain regions; set DEMO_AWS_REGION accordingly.
    - Free Tier AWS accounts reject some instance types; m7i-flex.large is accepted.
@@ -55,7 +55,7 @@ $status = Quiet { aws eks describe-cluster --name $ClusterName --region $Region 
 if ($status -eq "ACTIVE") {
     Write-Host "Cluster $ClusterName already exists (ACTIVE), skipping."
 } else {
-    Show (eksctl create cluster --name $ClusterName --region $Region --without-nodegroup 2>&1)
+    eksctl create cluster --name $ClusterName --region $Region --without-nodegroup 2>&1 | ForEach-Object { "$_" }
     # eksctl can stop at its IAM OIDC step in locked-down accounts. If the control plane exists, carry on.
     $status = Quiet { aws eks describe-cluster --name $ClusterName --region $Region --query cluster.status --output text }
     if ($status -ne "ACTIVE") { throw "Cluster was not created. Check CloudFormation in the AWS console for region $Region." }
@@ -73,7 +73,7 @@ $ngs = aws eks list-nodegroups --cluster-name $ClusterName --region $Region --qu
 if ($ngs) {
     Write-Host "Node group exists: $ngs"
 } else {
-    Show (eksctl create nodegroup --cluster $ClusterName --region $Region --name ng1 --nodes 1 --node-type $NodeType 2>&1)
+    eksctl create nodegroup --cluster $ClusterName --region $Region --name ng1 --nodes 1 --node-type $NodeType 2>&1 | ForEach-Object { "$_" }
     Check "create nodegroup"
 }
 

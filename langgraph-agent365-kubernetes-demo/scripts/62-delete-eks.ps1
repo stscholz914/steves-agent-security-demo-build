@@ -90,7 +90,7 @@ $status = Quiet { aws eks describe-cluster --name $ClusterName --region $Region 
 if (-not $status) {
     Write-Host "Cluster '$ClusterName' does not exist. Checking for leftovers."
 } else {
-    Write-Host "This permanently deletes the cluster, its node, the agent pod and the network. You can rebuild with scripts\60-rebuild-eks.ps1 (25-40 minutes)."
+    Write-Host "This permanently deletes the cluster, its node, the agent pod and the network. You can rebuild with scripts\60-rebuild-eks.ps1 (about 15-40 minutes)."
     if (-not $Force) {
         $a = Read-Host "Type DELETE to continue"
         if ($a -ne "DELETE") { Write-Host "Cancelled."; return }
@@ -100,7 +100,7 @@ if (-not $status) {
     $protNames = (aws cloudformation list-stacks --region $Region --query "StackSummaries[?StackStatus!='DELETE_COMPLETE'].StackName" --output text) -split "\s+" | Where-Object { $_ -like "eksctl-$ClusterName-*" }
     foreach ($p in $protNames) { Quiet { aws cloudformation update-termination-protection --stack-name $p --region $Region --no-enable-termination-protection } | Out-Null }
     if (-not $UseCloudFormation) {
-        Show (eksctl delete cluster --name $ClusterName --region $Region --wait --disable-nodegroup-eviction 2>&1)
+        eksctl delete cluster --name $ClusterName --region $Region --wait --disable-nodegroup-eviction 2>&1 | ForEach-Object { "$_" }
         $ok = ($LASTEXITCODE -eq 0)
         if (-not $ok) { Write-Host "eksctl could not finish (often TLS inspection blocking the cluster endpoint). Falling back to deleting the CloudFormation stacks directly." -ForegroundColor Yellow }
     }
