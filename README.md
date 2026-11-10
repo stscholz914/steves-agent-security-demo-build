@@ -30,7 +30,7 @@ Every demo has a **`PROMPTS.md`** next to its guide: copy-paste prompts you can 
 
 | Demo | Prompts |
 |---|---|
-| GSA MCP firewall | [`gsa-mcp-firewall-demo/PROMPTS.md`](gsa-mcp-firewall-demo/PROMPTS.md): one full build prompt (with the hard constraints already in it) and the prompt to use during the demo |
+| GSA MCP firewall | [`gsa-mcp-firewall-demo/PROMPTS.md`](gsa-mcp-firewall-demo/PROMPTS.md): a context block, the full build prompt (with the hard constraints already in it), thirteen stage prompts from publishing the server to tearing it down, troubleshooting prompts, and the prompt to use during the demo |
 | Claude Code + Defender AI agent runtime protection | [`claude-code-defender-demo/PROMPTS.md`](claude-code-defender-demo/PROMPTS.md): a context block, a one-shot prompt and ten stage prompts |
 | LangGraph agent on Amazon EKS with the Agent 365 SDK | [`langgraph-agent365-kubernetes-demo/PROMPTS.md`](langgraph-agent365-kubernetes-demo/PROMPTS.md): a one-prompt build, step prompts, cost-saving delete and rebuild prompts, and troubleshooting prompts |
 
