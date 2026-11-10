@@ -1,0 +1,69 @@
+# Deployment values: the ONLY environment-specific parts. No secret, key or password appears anywhere.
+apiVersion: v1
+kind: Namespace
+metadata: {name: a365-agents}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: langgraph-agent, namespace: a365-agents}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: langgraph-agent-config, namespace: a365-agents}
+data:
+  AZURE_TENANT_ID: "__TENANT_ID__"
+  A365_BLUEPRINT_ID: "__BLUEPRINT_ID__"
+  A365_AGENT_ID: "__AGENT_ID__"
+  A365_ENVIRONMENT: "__ENV__"
+  A365_AGENT_NAME: "LangGraphAgent"
+  AZURE_OPENAI_ENDPOINT: "__OPENAI_ENDPOINT__"
+  AZURE_OPENAI_DEPLOYMENT: "__OPENAI_DEPLOYMENT__"
+  ENABLE_OBSERVABILITY: "true"
+  ENABLE_A365_OBSERVABILITY_EXPORTER: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: langgraph-agent, namespace: a365-agents}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: langgraph-agent}}
+  template:
+    metadata: {labels: {app: langgraph-agent}}
+    spec:
+      serviceAccountName: langgraph-agent
+      initContainers:
+      - name: deps
+        image: python:3.12-slim
+        command: ["pip","install","--no-cache-dir","--target=/deps","langgraph","langchain-core","langchain-openai","opentelemetry-sdk","wrapt<2","microsoft-agents-a365-observability-core","microsoft-agents-a365-observability-extensions-langchain"]
+        env: [{name: HOME, value: /tmp}]
+        volumeMounts: [{name: deps, mountPath: /deps}, {name: tmp, mountPath: /tmp}]
+        securityContext: {runAsUser: 10001, runAsNonRoot: true, allowPrivilegeEscalation: false, capabilities: {drop: ["ALL"]}}
+      containers:
+      - name: agent
+        image: python:3.12-slim
+        command: ["python","/app/app.py"]
+        workingDir: /app
+        ports: [{containerPort: 8080}]
+        envFrom: [{configMapRef: {name: langgraph-agent-config}}]
+        env: [{name: PYTHONPATH, value: "/deps:/app"}, {name: PYTHONDONTWRITEBYTECODE, value: "1"}]
+        volumeMounts:
+        - {name: federated-token, mountPath: /var/run/secrets/tokens, readOnly: true}
+        - {name: deps, mountPath: /deps, readOnly: true}
+        - {name: code, mountPath: /app, readOnly: true}
+        - {name: tmp, mountPath: /tmp}
+        securityContext: {runAsUser: 10001, allowPrivilegeEscalation: false, runAsNonRoot: true, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+      volumes:
+      - {name: deps, emptyDir: {}}
+      - {name: tmp, emptyDir: {}}
+      - {name: code, configMap: {name: langgraph-agent-code}}
+      - name: federated-token
+        projected:
+          sources:
+          - serviceAccountToken: {audience: "api://AzureADTokenExchange", expirationSeconds: 3600, path: azure-identity-token}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: langgraph-agent, namespace: a365-agents}
+spec:
+  selector: {app: langgraph-agent}
+  ports: [{port: 80, targetPort: 8080}]
