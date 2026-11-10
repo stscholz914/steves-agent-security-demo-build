@@ -4,6 +4,8 @@ A complete, repeatable build for demonstrating the **Microsoft Entra Global Secu
 
 The demo shows an AI agent in VS Code attempting to invoke an MCP tool that bulk-exports customer PII, and the network refusing the call before it reaches the server — then the resulting evidence in GSA traffic logs and Microsoft Sentinel.
 
+> **Want an AI agent to build this for you?** See [PROMPTS.md](PROMPTS.md) for a ready-made Microsoft Scout prompt (also in [Appendix A](#appendix-a--automation-prompt)).
+
 > Part of [Steve's Agent Security Demo Build](../README.md). See also the [Claude Code + Defender AI agent runtime protection demo](../claude-code-defender-demo/README.md).
 
 ---
@@ -15,6 +17,7 @@ This guide lives in the `gsa-mcp-firewall-demo/` folder of [Steve's Agent Securi
 ```
 gsa-mcp-firewall-demo/
 ├── README.md                    # this guide
+├── PROMPTS.md                   # copy-paste prompts for Microsoft Scout
 ├── server/                      # deploy this folder to Azure App Service
 │   ├── package.json
 │   ├── server.js                # MCP server, Streamable HTTP, stateless

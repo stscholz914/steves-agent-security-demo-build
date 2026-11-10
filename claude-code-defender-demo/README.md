@@ -2,6 +2,8 @@
 
 Build a Windows VM where **Claude Code** is blocked by **Microsoft Defender for Endpoint** the moment a prompt-injection string is submitted, with no Claude subscription, API key or marketplace purchase.
 
+**Want an AI agent to do this for you?** See [PROMPTS.md](PROMPTS.md) for ready-made Microsoft Scout prompts (also in [Appendix A](#appendix-a--prompts-to-have-microsoft-scout-do-this-for-you)).
+
 Last verified: 10 Nov 2026. Defender AI agent runtime protection is a **Preview** feature, so check the linked Microsoft Learn pages if something behaves differently.
 
 ---

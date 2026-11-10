@@ -24,11 +24,31 @@ The first two are complementary. One enforces at the network edge, the other on 
 
 ---
 
+## Build them with Scout (the easy way)
+
+Every demo has a **`PROMPTS.md`** next to its guide: copy-paste prompts you can give to **Microsoft Scout** (or any AI agent that can run commands and use a browser) so it builds the demo for you while you approve the sign-ins. Pick a demo, open its prompts, and paste.
+
+| Demo | Prompts |
+|---|---|
+| GSA MCP firewall | [`gsa-mcp-firewall-demo/PROMPTS.md`](gsa-mcp-firewall-demo/PROMPTS.md): one full build prompt (with the hard constraints already in it) and the prompt to use during the demo |
+| Claude Code + Defender AI agent runtime protection | [`claude-code-defender-demo/PROMPTS.md`](claude-code-defender-demo/PROMPTS.md): a context block, a one-shot prompt and ten stage prompts |
+| LangGraph agent on Amazon EKS with the Agent 365 SDK | [`langgraph-agent365-kubernetes-demo/PROMPTS.md`](langgraph-agent365-kubernetes-demo/PROMPTS.md): a one-prompt build, step prompts, cost-saving delete and rebuild prompts, and troubleshooting prompts |
+
+**How to use them**
+
+1. Get this repository onto the machine Scout runs on (clone it, or download the ZIP) so Scout can read the guide and the source files the prompts refer to.
+2. Open the `PROMPTS.md` for your demo. Replace every placeholder (`<ANGLE_BRACKETS>` or `[BRACKETS]`) with your own values.
+3. Paste the context block or one-shot prompt into a new Scout chat. Use the step prompts to go one stage at a time, or to repeat a single stage later.
+4. Stay in the loop for **sign-ins, MFA and passkey approvals**, and for anything that changes your tenant or costs money. The prompts tell Scout to stop and ask.
+
+**Ground rules:** use a lab tenant, never paste secrets into the chat, and ask Scout to show real command output as evidence. The prompts are the same ones embedded in each guide's README (or its appendix), collected in one place so they are easy to find.
+
+---
 ## What each demo contains
 
 - A **step-by-step build guide** (`README.md`) with prerequisites and a troubleshooting table.
 - The **source files** needed to build it, such as server code, client config and launchers.
-- **Copy-paste prompts** to have an AI agent build the demo for you.
+- **Copy-paste prompts** to have an AI agent build the demo for you, collected in a `PROMPTS.md` in each demo folder (see [Build them with Scout](#build-them-with-scout-the-easy-way)).
 
 The GSA MCP firewall guide opens with a section on the design constraints that decide the architecture. The Claude Code + Defender guide also includes a Word copy, a `kit/` folder of ready-to-copy files, and a reference section with the values from my own build so you can compare. The LangGraph on EKS guide adds a `PROMPTS.md` of Scout prompts, ready-made PowerShell scripts to build, pause, delete and verify the AWS side, and a section on keeping the AWS bill near zero.
 
@@ -56,7 +76,7 @@ The GSA MCP firewall guide opens with a section on the design constraints that d
 
 ## Adding new demos
 
-Each demo gets its own folder named `<topic>-demo/` containing a `README.md` as a complete guide, plus its source files. New demos are added to the table above.
+Each demo gets its own folder named `<topic>-demo/` containing a `README.md` as a complete guide, a `PROMPTS.md` of Scout prompts that build it, and its source files. New demos are added to the table above and to the Scout prompts table.
 
 ---
 
