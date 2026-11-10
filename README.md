@@ -4,6 +4,8 @@ A complete, repeatable build for demonstrating the **Microsoft Entra Global Secu
 
 The demo shows an AI agent in VS Code attempting to invoke an MCP tool that bulk-exports customer PII, and the network refusing the call before it reaches the server — then the resulting evidence in GSA traffic logs and Microsoft Sentinel.
 
+> **Also in this repo:** [Claude Code + Defender AI agent runtime protection demo](claude-code-defender-demo/README.md) - build a VM where Claude Code is blocked by Microsoft Defender on a prompt-injection string, with a Word copy and ready-to-copy kit files.
+
 ---
 
 ## Repository layout
