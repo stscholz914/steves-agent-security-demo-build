@@ -14,6 +14,7 @@ This is my repo of **hands-on demo builds for securing AI agents** on the Micros
 | **Claude Code + Defender AI agent runtime protection** | Claude Code on a Windows VM is blocked by Defender for Endpoint when it receives a prompt-injection test string. A local stub model means no Claude subscription or API key is needed. Evidence in the Defender alert, including the prompt text. | Defender for Endpoint AI agent runtime protection (Preview), Claude Code, Defender advanced hunting, Microsoft 365 admin center Agents | [`claude-code-defender-demo/`](claude-code-defender-demo/README.md) |
 | **LangGraph agent on Amazon EKS with the Agent 365 SDK** | An open-source LangGraph agent runs on Kubernetes in AWS with a Microsoft Entra agent identity and **no stored secret**: Entra trusts the cluster's own token. It calls Azure OpenAI and Microsoft Graph as itself, is refused a permission it was not given, and emits Agent 365 telemetry. Written for people who are not AWS or Linux experts, with a **delete and rebuild** routine that takes the AWS cost to about $0 between demos, and Scout prompts to build it for you. | Microsoft Entra Agent ID (agent blueprint, agent identity, federated credential), Microsoft Agent 365 SDK and registry, Azure OpenAI, Microsoft Graph, Amazon EKS, LangGraph | [`langgraph-agent365-kubernetes-demo/`](langgraph-agent365-kubernetes-demo/README.md) |
 | **Purview DLP for Microsoft 365 Copilot** | Copilot refuses to use files labelled Customer PII, M&A or HR, refuses prompts containing an SSN or credit card number, and skips web search when a prompt contains a passport or licence number. A Finance-labelled file is still summarised (the control), and an unlabelled transcript with pasted PII shows the gap. Evidence in Purview Activity explorer. | Microsoft Purview DLP (Microsoft 365 Copilot location), sensitivity labels, Microsoft 365 Copilot, SharePoint | [`purview-copilot-dlp-demo/`](purview-copilot-dlp-demo/README.md) |
+| **Local Claude Code agent + MCP firewall** | Joins the two builds above. A local stub model is extended so Claude Code on the demo VM calls the MCP server through Global Secure Access: list accounts, balance and health are allowed, the PII export is blocked with a Connection ID. A dependency-free script agent runs the same calls and labels each ALLOWED or BLOCKED. Defender still blocks the prompt-injection string on the same agent. | Claude Code, Entra Global Secure Access (Internet Access, TLS inspection, MCP firewall), Defender for Endpoint AI agent runtime protection (Preview), MCP, Node.js | [`claude-codelocal-agent/`](claude-codelocal-agent/README.md) |
 
 ### Which one do I want?
 
@@ -21,8 +22,9 @@ This is my repo of **hands-on demo builds for securing AI agents** on the Micros
 - **Detecting and blocking malicious prompts on the endpoint itself:** start with the Claude Code + Defender demo.
 - **Giving an open-source agent (LangGraph) a real Entra identity with no secrets, running outside Azure, and showing it in Agent 365:** start with the LangGraph on Amazon EKS demo.
 - **Stopping Copilot from using or leaking sensitive data (labelled files, SSNs and card numbers in prompts, web search):** start with the Purview DLP for Microsoft 365 Copilot demo.
+- **Seeing both controls act on one agent (network block on its MCP tool call, endpoint block on its prompt):** start with the Local Claude Code agent + MCP firewall demo, after building the two it joins.
 
-The first two are complementary. One enforces at the network edge, the other on the device. The third is about **identity and observability** for an agent that runs on someone else's infrastructure.
+The first two are complementary. One enforces at the network edge, the other on the device. The local Claude Code agent demo puts both on the same agent. The LangGraph demo is about **identity and observability** for an agent that runs on someone else's infrastructure.
 
 ---
 
@@ -36,6 +38,7 @@ Every demo has a **`PROMPTS.md`** next to its guide: copy-paste prompts you can 
 | Claude Code + Defender AI agent runtime protection | [`claude-code-defender-demo/PROMPTS.md`](claude-code-defender-demo/PROMPTS.md): a context block, a one-shot prompt and ten stage prompts |
 | LangGraph agent on Amazon EKS with the Agent 365 SDK | [`langgraph-agent365-kubernetes-demo/PROMPTS.md`](langgraph-agent365-kubernetes-demo/PROMPTS.md): a one-prompt build, step prompts, cost-saving delete and rebuild prompts, and troubleshooting prompts |
 | Purview DLP for Microsoft 365 Copilot | [`purview-copilot-dlp-demo/PROMPTS.md`](purview-copilot-dlp-demo/PROMPTS.md): a context block, a one-prompt build, eleven stage prompts from labels to tear-down, troubleshooting prompts and a prompt for the live demo |
+| Local Claude Code agent + MCP firewall | [`claude-codelocal-agent/PROMPTS.md`](claude-codelocal-agent/PROMPTS.md): a context block, a one-prompt build, nine stage prompts from the CA check to tear-down, troubleshooting prompts and a prompt for the live demo |
 
 **How to use them**
 
@@ -53,7 +56,7 @@ Every demo has a **`PROMPTS.md`** next to its guide: copy-paste prompts you can 
 - The **source files** needed to build it, such as server code, client config and launchers.
 - **Copy-paste prompts** to have an AI agent build the demo for you, collected in a `PROMPTS.md` in each demo folder (see [Build them with Scout](#build-them-with-scout-the-easy-way)).
 
-The GSA MCP firewall guide opens with a section on the design constraints that decide the architecture. The Claude Code + Defender guide also includes a Word copy, a `kit/` folder of ready-to-copy files, and a reference section with the values from my own build so you can compare. The Purview DLP guide adds ready-made PowerShell scripts for the labels and the policy, a Python generator for synthetic sample data with label stamping, and a nine-prompt test script with expected results. The LangGraph on EKS guide adds a `PROMPTS.md` of Scout prompts, ready-made PowerShell scripts to build, pause, delete and verify the AWS side, and a section on keeping the AWS bill near zero.
+The GSA MCP firewall guide opens with a section on the design constraints that decide the architecture. The Claude Code + Defender guide also includes a Word copy, a `kit/` folder of ready-to-copy files, and a reference section with the values from my own build so you can compare. The Purview DLP guide adds ready-made PowerShell scripts for the labels and the policy, a Python generator for synthetic sample data with label stamping, and a nine-prompt test script with expected results. The local Claude Code agent guide adds a tool-calling stub model, a script agent and a launcher in `kit/`, and a check for the GSA inspection CA file that Node needs. The LangGraph on EKS guide adds a `PROMPTS.md` of Scout prompts, ready-made PowerShell scripts to build, pause, delete and verify the AWS side, and a section on keeping the AWS bill near zero.
 
 ---
 
@@ -87,4 +90,4 @@ Each demo gets its own folder named `<topic>-demo/` containing a `README.md` as 
 
 MIT. See [`LICENSE`](LICENSE). Use, copy and adapt freely. There is no warranty and no official support.
 
-*Last updated 10 November 2026.*
+*Last updated 13 November 2026.*
